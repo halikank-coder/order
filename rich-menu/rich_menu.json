@@ -1,0 +1,89 @@
+{
+    "size": {
+        "width": 2500,
+        "height": 1686
+    },
+    "selected": true,
+    "name": "Shirasaka Main Menu V2",
+    "chatBarText": "メニューを開く",
+    "areas": [
+        {
+            "bounds": {
+                "x": 0,
+                "y": 0,
+                "width": 833,
+                "height": 843
+            },
+            "action": {
+                "type": "uri",
+                "label": "ご注文・予約",
+                "uri": "https://liff.line.me/YOUR_LIFF_ID/order"
+            }
+        },
+        {
+            "bounds": {
+                "x": 833,
+                "y": 0,
+                "width": 833,
+                "height": 843
+            },
+            "action": {
+                "type": "uri",
+                "label": "作例・カタログ",
+                "uri": "https://www.instagram.com/YOUR_ACCOUNT"
+            }
+        },
+        {
+            "bounds": {
+                "x": 1666,
+                "y": 0,
+                "width": 834,
+                "height": 843
+            },
+            "action": {
+                "type": "uri",
+                "label": "24h無人店舗利用ガイド",
+                "uri": "https://liff.line.me/YOUR_LIFF_ID/guide"
+            }
+        },
+        {
+            "bounds": {
+                "x": 0,
+                "y": 843,
+                "width": 833,
+                "height": 843
+            },
+            "action": {
+                "type": "message",
+                "label": "よくある質問",
+                "text": "よくある質問"
+            }
+        },
+        {
+            "bounds": {
+                "x": 833,
+                "y": 843,
+                "width": 833,
+                "height": 843
+            },
+            "action": {
+                "type": "uri",
+                "label": "店舗情報・アクセス",
+                "uri": "https://goo.gl/maps/YOUR_MAP_ID"
+            }
+        },
+        {
+            "bounds": {
+                "x": 1666,
+                "y": 843,
+                "width": 834,
+                "height": 843
+            },
+            "action": {
+                "type": "message",
+                "label": "個別相談",
+                "text": "個別相談をお願いします"
+            }
+        }
+    ]
+}
