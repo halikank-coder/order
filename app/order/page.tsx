@@ -26,7 +26,7 @@ export default function OrderPage() {
     // Mock Square Links - In production, these would be env vars or fetched from config
     const PAYMENT_LINKS = {
         '3300': 'https://square.link/u/B3FkQL5S',
-        '5500': 'https://square.link/u/mock5500',
+        '5500': 'https://square.link/u/cRv8q9eh',
         '11000': 'https://square.link/u/mock11000',
     };
 
