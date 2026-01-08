@@ -27,7 +27,7 @@ export default function OrderPage() {
     const PAYMENT_LINKS = {
         '3300': 'https://square.link/u/B3FkQL5S',
         '5500': 'https://square.link/u/cRv8q9eh',
-        '11000': 'https://square.link/u/mock11000',
+        '11000': 'https://square.link/u/qMcNrqQe',
     };
 
     const handleSubmit = (e: React.FormEvent) => {
