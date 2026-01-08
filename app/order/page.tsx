@@ -28,6 +28,7 @@ export default function OrderPage() {
         '3300': 'https://square.link/u/B3FkQL5S',
         '5500': 'https://square.link/u/cRv8q9eh',
         '11000': 'https://square.link/u/qMcNrqQe',
+        'custom': 'https://square.link/u/zD979fe1',
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -38,6 +39,11 @@ export default function OrderPage() {
     };
 
     if (isSubmitted) {
+        const paymentUrl = PAYMENT_LINKS[formData.budget as keyof typeof PAYMENT_LINKS];
+        const displayAmount = formData.budget === 'custom'
+            ? parseInt(formData.budgetCustom || '0').toLocaleString()
+            : parseInt(formData.budget).toLocaleString();
+
         return (
             <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white p-4 font-sans text-slate-800 flex items-center justify-center">
                 <Card className="max-w-md w-full shadow-xl border-none overflow-hidden animate-in fade-in zoom-in duration-300">
@@ -48,38 +54,33 @@ export default function OrderPage() {
                         <CardTitle className="text-2xl font-bold text-green-800 mb-2">ご注文ありがとうございます</CardTitle>
                         <CardDescription className="text-slate-600">
                             内容を承りました。<br />
-                            {formData.budget === 'custom'
-                                ? '担当者が内容を確認し、折り返しご連絡いたします。'
-                                : '以下のボタンからお支払い手続きをお願いいたします。'}
+                            以下のボタンからお支払い手続きをお願いいたします。
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="p-8 space-y-6">
-                        {formData.budget !== 'custom' && (
-                            <div className="text-center space-y-4">
-                                <p className="text-sm font-medium text-slate-500">お支払い金額</p>
-                                <p className="text-3xl font-bold text-slate-900">¥{parseInt(formData.budget).toLocaleString()}</p>
-                                <a
-                                    href={PAYMENT_LINKS[formData.budget as keyof typeof PAYMENT_LINKS]}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="block w-full"
-                                >
-                                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-lg rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
-                                        <CreditCard className="w-5 h-5" />
-                                        Squareで支払う
-                                    </Button>
-                                </a>
-                                <p className="text-xs text-slate-400 mt-2">
-                                    ※ 外部の安全な決済ページ(Square)へ移動します
+                        <div className="text-center space-y-4">
+                            <p className="text-sm font-medium text-slate-500">お支払い金額</p>
+                            <p className="text-3xl font-bold text-slate-900">¥{displayAmount}</p>
+                            {formData.budget === 'custom' && (
+                                <p className="text-sm text-red-500 font-medium bg-red-50 p-2 rounded">
+                                    ※ 決済画面にて、上記の金額をご自身で入力してください。
                                 </p>
-                            </div>
-                        )}
-
-                        {formData.budget === 'custom' && (
-                            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100 text-sm text-yellow-800">
-                                オーダーメイドのご注文ありがとうございます。店舗スタッフが内容を確認後、LINEにてご連絡・お見積もりをお送りいたします。これにて受付完了となります。
-                            </div>
-                        )}
+                            )}
+                            <a
+                                href={paymentUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block w-full"
+                            >
+                                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-lg rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                                    <CreditCard className="w-5 h-5" />
+                                    Squareで支払う
+                                </Button>
+                            </a>
+                            <p className="text-xs text-slate-400 mt-2">
+                                ※ 外部の安全な決済ページ(Square)へ移動します
+                            </p>
+                        </div>
 
                         <Button variant="outline" className="w-full" onClick={() => window.location.reload()}>
                             トップに戻る
