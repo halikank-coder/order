@@ -22,6 +22,7 @@ export default function OrderPage() {
     });
 
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Mock Square Links - In production, these would be env vars or fetched from config
     const PAYMENT_LINKS = {
@@ -31,11 +32,29 @@ export default function OrderPage() {
         'custom': 'https://square.link/u/zD979fe1',
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, you would send formData to your backend/LINE Notify here.
-        console.log("Order Data:", formData);
-        setIsSubmitted(true);
+        setIsLoading(true);
+
+        try {
+            const res = await fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            if (!res.ok) {
+                throw new Error('Notification failed');
+            }
+
+            console.log("Order Data Sent & Notification Triggered");
+            setIsSubmitted(true);
+        } catch (error) {
+            console.error(error);
+            alert('送信に失敗しました。もう一度お試しください。');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     if (isSubmitted) {
