@@ -184,19 +184,18 @@ export default function OrderPage() {
 
                         {/* Date & Time */}
                         <div className="grid grid-cols-1 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="date" className="text-sm font-semibold text-slate-700">
-                                    {formData.orderType === 'delivery' ? '配送希望日' : '来店予定日'} <span className="text-pink-500">*</span>
-                                </Label>
-                                <div className="relative">
-                                    <Input
-                                        id="date" type="date" required
-                                        className="h-12 text-lg pl-10"
-                                        value={formData.date}
-                                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                    />
-                                    <CalendarIcon className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
-                                </div>
+                            <Label htmlFor="date" className="text-sm font-semibold text-slate-700">
+                                {formData.orderType === 'delivery' ? '配送希望日' : '来店予定日'} <span className="text-pink-500">*</span>
+                            </Label>
+                            <div className="relative">
+                                <Input
+                                    id="date" type="date" required
+                                    min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+                                    className="h-12 text-lg pl-10"
+                                    value={formData.date}
+                                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                />
+                                <CalendarIcon className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
                             </div>
 
                             {/* Pickup Time */}
