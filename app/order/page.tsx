@@ -162,7 +162,7 @@ export default function OrderPage() {
 
                             {/* Conditional Info for Delivery */}
                             {formData.orderType === 'delivery' && (
-                                <div className="space-y-3 pt-2 animate-in fade-in slide-in-from-top-2">
+                                <div className="space-y-3 pt-2">
                                     <div className="space-y-2">
                                         <Label className="text-sm font-medium text-slate-700">配送エリア</Label>
                                         <Select value={formData.region} onValueChange={(val) => setFormData({ ...formData, region: val })}>
@@ -201,7 +201,7 @@ export default function OrderPage() {
 
                             {/* Pickup Time */}
                             {formData.orderType === 'pickup' && (
-                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                <div className="space-y-2">
                                     <Label htmlFor="time" className="text-sm font-semibold text-slate-700">来店時間 <span className="text-pink-500">*</span></Label>
                                     <div className="relative">
                                         <Select value={formData.pickupTime} onValueChange={(val) => setFormData({ ...formData, pickupTime: val })}>
@@ -257,7 +257,7 @@ export default function OrderPage() {
                                 </Button>
                             </div>
                             {formData.budget === 'custom' && (
-                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                <div className="space-y-2">
                                     <div className="relative">
                                         <Input
                                             type="number" min="2000" placeholder="金額を入力 (2000円以上)"

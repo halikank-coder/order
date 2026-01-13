@@ -28,9 +28,9 @@
                 "height": 843
             },
             "action": {
-                "type": "uri",
+                "type": "message",
                 "label": "作例・カタログ",
-                "uri": "https://www.instagram.com/YOUR_ACCOUNT"
+                "text": "カタログ"
             }
         },
         {
