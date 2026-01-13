@@ -16,7 +16,10 @@ export async function POST(req: Request) {
         const client = new Client(config);
 
         const body = await req.json();
-        const { name, phone, date, usage, budget, message, budgetCustom } = body;
+        const {
+            name, phone, date, usage, budget, message, budgetCustom,
+            orderType, region, pickupTime, quantity
+        } = body;
 
         const adminUserId = process.env.LINE_ADMIN_USER_ID;
 
@@ -25,16 +28,33 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Server configuration error: Missing Admin ID' }, { status: 500 });
         }
 
+        // Helper for budget display
+        const budgetDisplay = budget === 'custom'
+            ? `${parseInt(budgetCustom || '0').toLocaleString()}円 (その他)`
+            : `${parseInt(budget).toLocaleString()}円`;
+
+        // Helper for order type details
+        let typeDetails = '';
+        if (orderType === 'delivery') {
+            typeDetails = `🚚 受け取り方法: 配送\n📍 エリア: ${region === 'takamatsu' ? '高松市内' : '高松市外'}`;
+        } else {
+            typeDetails = `🛍 受け取り方法: 店頭受取\n⏰ 来店時間: ${pickupTime}`;
+        }
+
         const orderDetails = `🌸 新しい注文が入りました！ 🌸
 
 👤 お名前: ${name}
 📞 電話番号: ${phone}
-📅 受取希望日: ${date}
+📅 日時: ${date}
+
+${typeDetails}
+📦 数量: ${quantity}個
+
 🎁 用途: ${usage}
-💰 予算: ${budget === 'custom' ? `${budgetCustom}円 (その他)` : `${parseInt(budget).toLocaleString()}円`}
+💰 予算: ${budgetDisplay}
 
 📝 メッセージ/要望:
-${message}
+${message || 'なし'}
 `;
 
         await client.pushMessage(adminUserId, {
