@@ -16,6 +16,7 @@ export default function OrderPage() {
         phone: '',
         date: '',
         orderType: 'delivery', // 'delivery' | 'pickup'
+        productType: '',       // 'arrangement' | 'bouquet' | 'stand' | 'orchid'
         region: 'takamatsu',   // 'takamatsu' | 'other'
         pickupTime: '10:00',
         usage: '',
@@ -40,13 +41,30 @@ export default function OrderPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Validation for Orchid
+        if (!formData.productType) {
+            alert('商品タイプを選択してください。');
+            return;
+        }
+
         // Validation for Budget
         if (formData.budget === 'custom') {
             const amount = parseInt(formData.budgetCustom);
-            if (isNaN(amount) || amount < 2000) {
-                alert('ご予算は最低2,000円からとなります。');
-                return;
+            if (formData.productType === 'orchid') {
+                if (isNaN(amount) || amount < 15000) {
+                    alert('胡蝶蘭のご予算は最低15,000円からとなります。');
+                    return;
+                }
+            } else {
+                if (isNaN(amount) || amount < 2000) {
+                    alert('ご予算は最低2,000円からとなります。');
+                    return;
+                }
             }
+        } else if (formData.productType === 'orchid' && ['3300', '5500', '11000'].includes(formData.budget)) {
+            // Case where user selected orchid but kept a lower preset budget
+            alert('胡蝶蘭のご予算は最低15,000円からとなります。「その他」から15,000円以上を入力してください。');
+            return;
         }
 
         setIsLoading(true);
@@ -232,11 +250,48 @@ export default function OrderPage() {
                             </div>
                         </div>
 
+                        {/* Product Type (New) */}
+                        <div className="space-y-3">
+                            <Label className="text-base font-semibold text-slate-800">商品タイプ <span className="text-pink-500">*</span></Label>
+                            <div className="grid grid-cols-2 gap-3">
+                                {[
+                                    { id: 'arrangement', label: 'アレンジメント' },
+                                    { id: 'bouquet', label: '花束' },
+                                    { id: 'stand', label: 'スタンド花' },
+                                    { id: 'orchid', label: '胡蝶蘭 (15,000円~)' }
+                                ].map((type) => (
+                                    <div key={type.id}>
+                                        <RadioGroupItem
+                                            value={type.id}
+                                            id={`product-${type.id}`}
+                                            className="hidden" // hidden but controllable via parent state if we use RadioGroup properly, but here we use buttons for custom styling like budget
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant={formData.productType === type.id ? "default" : "outline"}
+                                            onClick={() => {
+                                                const updates: any = { productType: type.id };
+                                                // If switching to orchid, reset budget if it's too low or a preset
+                                                if (type.id === 'orchid') {
+                                                    updates.budget = 'custom';
+                                                    updates.budgetCustom = '';
+                                                }
+                                                setFormData({ ...formData, ...updates });
+                                            }}
+                                            className={`w-full h-14 text-sm font-medium transition-all ${formData.productType === type.id ? "bg-pink-600 hover:bg-pink-700 shadow-md transform scale-[1.02]" : "bg-white hover:bg-slate-50"}`}
+                                        >
+                                            {type.label}
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Budget */}
                         <div className="space-y-3">
                             <Label className="text-sm font-semibold text-slate-700">ご予算</Label>
                             <div className="grid grid-cols-2 gap-3">
-                                {['3300', '5500', '11000'].map((price) => (
+                                {formData.productType !== 'orchid' && ['3300', '5500', '11000'].map((price) => (
                                     <Button
                                         key={price} type="button"
                                         variant={formData.budget === price ? "default" : "outline"}
@@ -252,14 +307,16 @@ export default function OrderPage() {
                                     onClick={() => setFormData({ ...formData, budget: 'custom' })}
                                     className={`h-14 text-lg font-medium transition-all ${formData.budget === 'custom' ? "bg-pink-600 hover:bg-pink-700 shadow-md transform scale-[1.02]" : "bg-white hover:bg-slate-50"}`}
                                 >
-                                    その他 (2000円~)
+                                    {formData.productType === 'orchid' ? '金額を指定 (15,000円~)' : 'その他 (2000円~)'}
                                 </Button>
                             </div>
                             {formData.budget === 'custom' && (
                                 <div className="space-y-2">
                                     <div className="relative">
                                         <Input
-                                            type="number" min="2000" placeholder="金額を入力 (2000円以上)"
+                                            type="number"
+                                            min={formData.productType === 'orchid' ? "15000" : "2000"}
+                                            placeholder={formData.productType === 'orchid' ? "金額を入力 (15000円以上)" : "金額を入力 (2000円以上)"}
                                             className="h-12 text-lg pl-10"
                                             value={formData.budgetCustom}
                                             onChange={(e) => setFormData({ ...formData, budgetCustom: e.target.value })}
@@ -267,7 +324,9 @@ export default function OrderPage() {
                                         <Banknote className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
                                         <span className="absolute right-4 top-3.5 text-slate-500">円</span>
                                     </div>
-                                    <p className="text-xs text-red-500 font-medium">※ 最低2,000円からとなります。</p>
+                                    <p className="text-xs text-red-500 font-medium">
+                                        {formData.productType === 'orchid' ? '※ 胡蝶蘭は最低15,000円からとなります。' : '※ 最低2,000円からとなります。'}
+                                    </p>
                                 </div>
                             )}
                         </div>

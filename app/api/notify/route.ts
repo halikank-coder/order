@@ -18,7 +18,7 @@ export async function POST(req: Request) {
         const body = await req.json();
         const {
             name, phone, date, usage, budget, message, budgetCustom,
-            orderType, region, pickupTime, quantity
+            orderType, region, pickupTime, quantity, productType
         } = body;
 
         const adminUserId = process.env.LINE_ADMIN_USER_ID;
@@ -41,12 +41,22 @@ export async function POST(req: Request) {
             typeDetails = `🛍 受け取り方法: 店頭受取\n⏰ 来店時間: ${pickupTime}`;
         }
 
+        // Helper for product type translation
+        const productTypeMap: Record<string, string> = {
+            'arrangement': 'アレンジメント',
+            'bouquet': '花束',
+            'stand': 'スタンド花',
+            'orchid': '胡蝶蘭'
+        };
+        const productTypeDisplay = productTypeMap[productType] || '未選択';
+
         const orderDetails = `🌸 新しい注文が入りました！ 🌸
 
 👤 お名前: ${name}
 📞 電話番号: ${phone}
 📅 日時: ${date}
 
+🌷 商品: ${productTypeDisplay}
 ${typeDetails}
 📦 数量: ${quantity}個
 
