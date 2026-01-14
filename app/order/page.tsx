@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CalendarIcon, CreditCard, Banknote, ShoppingBag, Truck, Clock, MapPin, Package } from "lucide-react";
+import { CalendarIcon, CreditCard, Banknote, ShoppingBag, Truck, Clock, Package } from "lucide-react";
 
 export default function OrderPage() {
     const [formData, setFormData] = useState({
@@ -139,7 +139,7 @@ export default function OrderPage() {
                     </div>
                     <CardTitle className="text-2xl font-bold text-slate-800 tracking-tight">ご注文フォーム</CardTitle>
                     <CardDescription className="text-slate-600">
-                        お届け・来店受取のご予約
+                        お届け・来店受取のご予約 (v1.1)
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-8 px-6">
