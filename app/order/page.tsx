@@ -261,11 +261,6 @@ export default function OrderPage() {
                                     { id: 'orchid', label: '胡蝶蘭 (15,000円~)' }
                                 ].map((type) => (
                                     <div key={type.id}>
-                                        <RadioGroupItem
-                                            value={type.id}
-                                            id={`product-${type.id}`}
-                                            className="hidden" // hidden but controllable via parent state if we use RadioGroup properly, but here we use buttons for custom styling like budget
-                                        />
                                         <Button
                                             type="button"
                                             variant={formData.productType === type.id ? "default" : "outline"}
