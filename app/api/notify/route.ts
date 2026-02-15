@@ -21,12 +21,15 @@ export async function POST(req: Request) {
             orderType, region, pickupTime, quantity, productType
         } = body;
 
-        const adminUserId = process.env.LINE_ADMIN_USER_ID;
+        const adminUserIdRaw = process.env.LINE_ADMIN_USER_ID;
 
-        if (!adminUserId) {
+        if (!adminUserIdRaw) {
             console.error('Missing LINE_ADMIN_USER_ID');
             return NextResponse.json({ error: 'Server configuration error: Missing Admin ID' }, { status: 500 });
         }
+
+        // Support multiple admins (comma separated)
+        const adminUserIds = adminUserIdRaw.split(',').map(id => id.trim()).filter(id => id.length > 0);
 
         // Helper for budget display
         const budgetDisplay = budget === 'custom'
@@ -50,6 +53,13 @@ export async function POST(req: Request) {
         };
         const productTypeDisplay = productTypeMap[productType] || '未選択';
 
+        // Helper for payment method translation
+        const paymentMethodMap: Record<string, string> = {
+            'credit': 'クレジットカード (Square)',
+            'onsite': '受取時にお支払い'
+        };
+        const paymentMethodDisplay = paymentMethodMap[body.paymentMethod] || '未選択';
+
         const orderDetails = `🌸 新しい注文が入りました！ 🌸
 
 👤 お名前: ${name}
@@ -62,12 +72,13 @@ ${typeDetails}
 
 🎁 用途: ${usage}
 💰 予算: ${budgetDisplay}
+💳 支払: ${paymentMethodDisplay}
 
 📝 メッセージ/要望:
 ${message || 'なし'}
 `;
 
-        await client.pushMessage(adminUserId, {
+        await client.multicast(adminUserIds, {
             type: 'text',
             text: orderDetails,
         });

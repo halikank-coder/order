@@ -112,17 +112,27 @@ export default function OrderPage() {
                         </div>
                         <CardTitle className="text-2xl font-bold text-green-800 mb-2">ご注文ありがとうございます</CardTitle>
                         <CardDescription className="text-slate-600">
-                            内容を承りました。<br />支払い手続きをお願いします。
+                            内容を承りました。<br />
+                            {formData.paymentMethod === 'credit' ? '支払い手続きをお願いします。' : 'お支払いは受取時にお願いいたします。'}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="p-8 space-y-6 text-center">
                         <p className="text-3xl font-bold text-slate-900">¥{displayAmount} <span className="text-base font-normal text-slate-500">~</span></p>
                         <p className="text-sm text-slate-500">※送料等は別途計算となる場合があります</p>
-                        <a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
-                            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-lg rounded-xl shadow-lg gap-2">
-                                <CreditCard className="w-5 h-5" /> Squareで支払う
-                            </Button>
-                        </a>
+                        
+                        {formData.paymentMethod === 'credit' ? (
+                            <a href={paymentUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
+                                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-lg rounded-xl shadow-lg gap-2">
+                                    <CreditCard className="w-5 h-5" /> Squareで支払う
+                                </Button>
+                            </a>
+                        ) : (
+                             <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-slate-600">
+                                <p className="font-bold mb-1">【お支払いについて】</p>
+                                <p className="text-sm">商品のお受け取り時に、現金またはPayPay等でお支払いください。</p>
+                            </div>
+                        )}
+                        
                         <Button variant="outline" className="w-full" onClick={() => window.location.reload()}>トップに戻る</Button>
                     </CardContent>
                 </Card>
@@ -324,6 +334,50 @@ export default function OrderPage() {
                                     </p>
                                 </div>
                             )}
+                        </div>
+
+                        {/* Payment Method */}
+                        <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                             <Label className="text-base font-semibold text-slate-800 flex items-center gap-2">
+                                <CreditCard className="w-4 h-4 text-pink-500" /> お支払い方法 <span className="text-pink-500">*</span>
+                            </Label>
+                            <RadioGroup
+                                defaultValue="credit"
+                                value={formData.paymentMethod}
+                                onValueChange={(val) => setFormData({ ...formData, paymentMethod: val })}
+                                className="grid grid-cols-1 gap-3"
+                            >
+                                <div>
+                                    <RadioGroupItem value="credit" id="credit" className="peer sr-only" />
+                                    <Label
+                                        htmlFor="credit"
+                                        className="flex items-center justify-between rounded-md border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-pink-500 peer-data-[state=checked]:text-pink-600 cursor-pointer transition-all"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <CreditCard className="h-5 w-5" />
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold">クレジットカード (Square)</span>
+                                                <span className="text-xs text-slate-500">今すぐオンラインで決済</span>
+                                            </div>
+                                        </div>
+                                    </Label>
+                                </div>
+                                <div>
+                                    <RadioGroupItem value="onsite" id="onsite" className="peer sr-only" />
+                                    <Label
+                                        htmlFor="onsite"
+                                        className="flex items-center justify-between rounded-md border-2 border-muted bg-white p-4 hover:bg-slate-50 peer-data-[state=checked]:border-pink-500 peer-data-[state=checked]:text-pink-600 cursor-pointer transition-all"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <Banknote className="h-5 w-5" />
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold">受取時にお支払い</span>
+                                                <span className="text-xs text-slate-500">来店時または配送受取時</span>
+                                            </div>
+                                        </div>
+                                    </Label>
+                                </div>
+                            </RadioGroup>
                         </div>
 
                         {/* Usage & Quantity */}

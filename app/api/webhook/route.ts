@@ -2,25 +2,27 @@ import { NextResponse } from 'next/server';
 import { Client, WebhookEvent, FlexMessage, TextMessage } from '@line/bot-sdk';
 import * as crypto from 'crypto';
 
-const config = {
-    channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN || '',
-    channelSecret: process.env.LINE_CHANNEL_SECRET || '',
+const getClient = () => {
+    return new Client({
+        channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN || '',
+        channelSecret: process.env.LINE_CHANNEL_SECRET || '',
+    });
 };
-
-const client = new Client(config);
 
 export async function POST(req: Request) {
     try {
         const body = await req.text();
         const signature = req.headers.get('x-line-signature');
 
-        if (!config.channelSecret || !signature) {
+        const channelSecret = process.env.LINE_CHANNEL_SECRET || '';
+
+        if (!channelSecret || !signature) {
             return NextResponse.json({ error: 'Missing config or signature' }, { status: 400 });
         }
 
         // Verify signature
         const hash = crypto
-            .createHmac('sha256', config.channelSecret)
+            .createHmac('sha256', channelSecret)
             .update(body)
             .digest('base64');
 
@@ -57,6 +59,8 @@ async function handleEvent(event: WebhookEvent) {
         return handleFAQ(replyToken);
     } else if (text === '個別相談をお願いします') {
         return handleChatSupport(replyToken);
+    } else if (text === 'システムID確認') {
+        return handleSystemIdCheck(replyToken, event.source.userId);
     }
 
     return Promise.resolve(null);
@@ -232,7 +236,7 @@ async function handleCatalog(replyToken: string) {
         }
     };
 
-    return client.replyMessage(replyToken, flexMessage);
+    return getClient().replyMessage(replyToken, flexMessage);
 }
 
 async function handleFAQ(replyToken: string) {
@@ -273,15 +277,29 @@ A.「個別相談」メニューからどうぞ。
 Q.インボイスは？
 A.発行可能です。備考欄へ記載ください。`;
 
-    return client.replyMessage(replyToken, {
+    return getClient().replyMessage(replyToken, {
         type: 'text',
         text: faqText,
     });
 }
 
 async function handleChatSupport(replyToken: string) {
-    return client.replyMessage(replyToken, {
+    return getClient().replyMessage(replyToken, {
         type: 'text',
         text: `お問い合わせありがとうございます。\n\nスタッフが確認次第、順次ご返信させていただきます。\nご相談内容や、ご希望の商品イメージ写真などがございましたら、続けて送信してください。`,
+    });
+}
+
+async function handleSystemIdCheck(replyToken: string, userId: string | undefined) {
+    if (!userId) {
+        return getClient().replyMessage(replyToken, {
+            type: 'text',
+            text: 'ユーザーIDが取得できませんでした。',
+        });
+    }
+
+    return getClient().replyMessage(replyToken, {
+        type: 'text',
+        text: `あなたのユーザーIDは以下の通りです。\n\n${userId}\n\nこのIDを管理者に追加してください。`,
     });
 }
